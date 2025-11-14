@@ -8,11 +8,11 @@ sudo mkdir canal
 sudo chmod -R 777 canal
 cd canal
 
-wget https://github.com/alibaba/canal/releases/download/canal-1.1.7/canal.deployer-1.1.7.tar.gz
+wget https://github.com/alibaba/canal/releases/download/canal-1.1.8/canal.deployer-1.1.8.tar.gz
 
-tar -zxvf canal.deployer-1.1.7.tar.gz
+tar -zxvf canal.deployer-1.1.8.tar.gz
 
-cd canal.deployer-1.1.7
+cd canal.deployer-1.1.8
 
 conf/
 logs/
@@ -55,7 +55,7 @@ nohup sh bin/startup.sh &
 
 ps aux | grep canal
 
-java -classpath canal.deployer-1.1.7 ...
+java -classpath canal.deployer-1.1.8 ...
 
 insert into test.user(name) values('hello canal');
 
@@ -72,8 +72,8 @@ After=network.target
 [Service]
 Type=forking
 User=root
-ExecStart=/opt/canal/canal.deployer-1.1.7/bin/startup.sh
-ExecStop=/opt/canal/canal.deployer-1.1.7/bin/stop.sh
+ExecStart=/opt/canal/canal.deployer-1.1.8/bin/startup.sh
+ExecStop=/opt/canal/canal.deployer-1.1.8/bin/stop.sh
 Restart=always
 
 [Install]
