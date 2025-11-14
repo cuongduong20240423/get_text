@@ -29,7 +29,11 @@ system_dir=/opt/iotdb/iotdb/system
 wal_dirs=/opt/iotdb/iotdb/wal
 
 cd /opt/iotdb/iotdb/sbin
-./start-server.sh
+sudo apt install dos2unix -y
+dos2unix *.sh
+chmod +x *.sh
+./start-standalone.sh
+
 
 IoTDB is running now!
 
@@ -44,19 +48,25 @@ SET STORAGE GROUP TO root.sg1;
 
 sudo nano /etc/systemd/system/iotdb.service
 
+
+
 [Unit]
-Description=Apache IoTDB Service
+Description=Apache IoTDB 2.x Standalone
 After=network.target
 
 [Service]
-Type=forking
+Type=simple
 User=root
-ExecStart=/opt/iotdb/iotdb/sbin/start-server.sh
-ExecStop=/opt/iotdb/iotdb/sbin/stop-server.sh
+WorkingDirectory=/opt/iotdb/iotdb/sbin
+ExecStart=/opt/iotdb/iotdb/sbin/start-standalone.sh
+ExecStop=/opt/iotdb/iotdb/sbin/stop-standalone.sh
 Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
+
+
+
 
 sudo systemctl daemon-reload
 sudo systemctl enable iotdb
