@@ -1,0 +1,49 @@
+cd /opt
+sudo apt install git -y
+sudo git clone https://github.com/alibaba/DataX.git
+sudo mv DataX datax
+cd datax
+
+sudo apt install python3 python3-pip -y
+
+pip3 install -r requirements.txt
+
+pip3 install lxml setuptools python-docx
+
+sudo apt install maven -y
+
+cd /opt/datax
+mvn -U clean package assembly:assembly -Dmaven.test.skip=true
+
+datax/target/datax/datax/
+
+sudo cp -r target/datax/datax/ /opt/datax/run
+
+echo 'export DATAX_HOME=/opt/datax/run' | sudo tee -a /etc/profile
+echo 'export PATH=$PATH:$DATAX_HOME/bin' | sudo tee -a /etc/profile
+source /etc/profile
+
+cd /opt/datax/run
+python3 bin/datax.py job/job.json
+
+Task start success ...
+Task end, total 0 records
+
+sudo nano /etc/systemd/system/datax.service
+
+[Unit]
+Description=DataX Job Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/bin/python3 /opt/datax/run/bin/datax.py /opt/datax/run/job/job.json
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+
+sudo systemctl daemon-reload
+sudo systemctl enable datax
+sudo systemctl start datax
