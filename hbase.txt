@@ -14,23 +14,6 @@ export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 sudo nano /opt/hbase/conf/hbase-site.xml
 
 <configuration>
-    <property>
-        <name>hbase.rootdir</name>
-        <value>file:///opt/hbase/data</value>
-    </property>
-
-    <property>
-        <name>hbase.zookeeper.property.dataDir</name>
-        <value>/opt/hbase/zookeeper</value>
-    </property>
-
-    <property>
-        <name>hbase.cluster.distributed</name>
-        <value>false</value>
-    </property>
-</configuration>
-
-<configuration>
 
     <property>
         <name>hbase.cluster.distributed</name>
