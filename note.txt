@@ -1,1 +1,55 @@
-hihi
+sudo adduser hbase
+sudo usermod -aG sudo hbase
+
+cd /opt
+sudo wget https://dlcdn.apache.org/hbase/2.5.8/hbase-2.5.8-bin.tar.gz
+sudo tar -xzf hbase-2.5.8-bin.tar.gz
+sudo mv hbase-2.5.8 hbase
+sudo chown -R hbase:hbase /opt/hbase
+
+sudo nano /opt/hbase/conf/hbase-env.sh
+
+export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+
+sudo nano /opt/hbase/conf/hbase-site.xml
+
+<configuration>
+    <property>
+        <name>hbase.rootdir</name>
+        <value>file:///opt/hbase/data</value>
+    </property>
+
+    <property>
+        <name>hbase.zookeeper.property.dataDir</name>
+        <value>/opt/hbase/zookeeper</value>
+    </property>
+
+    <property>
+        <name>hbase.cluster.distributed</name>
+        <value>false</value>
+    </property>
+</configuration>
+
+sudo mkdir -p /opt/hbase/data
+sudo mkdir -p /opt/hbase/zookeeper
+sudo chown -R hbase:hbase /opt/hbase
+
+echo 'export HBASE_HOME=/opt/hbase' >> ~/.bashrc
+echo 'export PATH=$PATH:$HBASE_HOME/bin' >> ~/.bashrc
+source ~/.bashrc
+
+start-hbase.sh
+
+starting master, logging to .../logs/hbase-hbase-master-...
+
+jps
+
+HMaster
+HRegionServer
+QuorumPeerMain (nếu mà bật zookeeper)
+
+create 'test_table', 'cf'
+put 'test_table', 'row1', 'cf:name', 'Hello HBase'
+scan 'test_table'
+
+stop-hbase.sh
