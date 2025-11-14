@@ -1,0 +1,86 @@
+sudo apt update
+sudo apt install openjdk-11-jdk -y
+
+java -version
+
+cd /opt
+sudo mkdir canal
+sudo chmod -R 777 canal
+cd canal
+
+wget https://github.com/alibaba/canal/releases/download/canal-1.1.7/canal.deployer-1.1.7.tar.gz
+
+tar -zxvf canal.deployer-1.1.7.tar.gz
+
+cd canal.deployer-1.1.7
+
+conf/
+logs/
+bin/
+
+sudo nano conf/example/instance.properties
+
+
+canal.instance.mysql.slaveId=1234
+
+canal.instance.master.address=127.0.0.1:3306
+canal.instance.dbUsername=canal
+canal.instance.dbPassword=your_password
+
+canal.instance.filter.regex=.*\..*
+
+
+mysql -u root -p
+
+CREATE USER 'canal'@'%' IDENTIFIED BY 'your_password';
+GRANT SELECT, REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO 'canal'@'%';
+FLUSH PRIVILEGES;
+
+sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
+
+server-id = 1
+log-bin = mysql-bin
+binlog_format = ROW
+binlog_row_image = FULL
+expire_logs_days = 7
+
+sudo systemctl restart mysql
+
+sudo sh bin/startup.sh
+
+tail -f logs/canal/canal.log
+tail -f logs/example/example.log
+
+nohup sh bin/startup.sh &
+
+ps aux | grep canal
+
+java -classpath canal.deployer-1.1.7 ...
+
+insert into test.user(name) values('hello canal');
+
+tail -f logs/example/example.log
+
+sudo nano /etc/systemd/system/canal.service
+
+
+
+[Unit]
+Description=Alibaba Canal
+After=network.target
+
+[Service]
+Type=forking
+User=root
+ExecStart=/opt/canal/canal.deployer-1.1.7/bin/startup.sh
+ExecStop=/opt/canal/canal.deployer-1.1.7/bin/stop.sh
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
+
+sudo systemctl daemon-reload
+sudo systemctl enable canal
+sudo systemctl start canal
+sudo systemctl status canal
