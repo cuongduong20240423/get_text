@@ -76,3 +76,9 @@ sudo journalctl -u iotdb -f
 
 sudo ufw allow 6667
 sudo ufw reload
+
+
+Vao CLI: 
+cd /opt/iotdb/iotdb/sbin
+./start-standalone.sh
+./start-cli.sh
