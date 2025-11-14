@@ -1,0 +1,48 @@
+sudo systemctl stop redis-server
+sudo apt remove redis-server -y
+
+sudo apt update
+sudo apt install -y build-essential tcl curl
+
+cd /tmp
+curl -O https://download.redis.io/releases/redis-8.0.0.tar.gz
+tar xzvf redis-8.0.0.tar.gz
+cd redis-8.0.0
+
+make
+sudo make install
+
+sudo mkdir -p /etc/redis
+sudo cp redis.conf /etc/redis/
+sudo cp sentinel.conf /etc/redis/
+
+sudo nano /etc/systemd/system/redis.service
+
+
+[Unit]
+Description=Redis In-Memory Data Store
+After=network.target
+
+[Service]
+User=redis
+Group=redis
+ExecStart=/usr/local/bin/redis-server /etc/redis/redis.conf --supervised systemd
+ExecStop=/usr/local/bin/redis-cli shutdown
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
+sudo adduser --system --group --no-create-home redis
+
+
+sudo mkdir -p /var/lib/redis
+sudo chown redis:redis /var/lib/redis
+sudo chmod 770 /var/lib/redis
+
+sudo systemctl daemon-reload
+sudo systemctl enable redis
+sudo systemctl start redis
+
+
+redis-server -v
