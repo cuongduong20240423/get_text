@@ -1,0 +1,68 @@
+sudo apt update
+sudo apt install openjdk-11-jdk -y
+
+java -version
+
+cd /opt
+sudo mkdir iotdb
+sudo chmod 777 /opt/iotdb
+cd /opt/iotdb
+
+wget https://dlcdn.apache.org/iotdb/1.3.2/apache-iotdb-1.3.2-all-bin.zip
+
+sudo apt install unzip -y
+unzip apache-iotdb-1.3.2-all-bin.zip
+
+mv apache-iotdb-1.3.2-all-bin iotdb
+cd iotdb
+
+nano conf/iotdb-engine.properties
+
+# Port của IoTDB
+rpc_port=6667
+
+# Data folder
+data_dirs=/opt/iotdb/iotdb/data
+
+# Thư mục log
+system_dir=/opt/iotdb/iotdb/system
+wal_dirs=/opt/iotdb/iotdb/wal
+
+cd /opt/iotdb/iotdb/sbin
+./start-server.sh
+
+IoTDB is running now!
+
+cd /opt/iotdb/iotdb/sbin
+./start-cli.sh
+
+IoTDB> 
+
+SHOW STORAGE GROUP;
+
+SET STORAGE GROUP TO root.sg1;
+
+sudo nano /etc/systemd/system/iotdb.service
+
+[Unit]
+Description=Apache IoTDB Service
+After=network.target
+
+[Service]
+Type=forking
+User=root
+ExecStart=/opt/iotdb/iotdb/sbin/start-server.sh
+ExecStop=/opt/iotdb/iotdb/sbin/stop-server.sh
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+
+sudo systemctl daemon-reload
+sudo systemctl enable iotdb
+sudo systemctl start iotdb
+
+sudo journalctl -u iotdb -f
+
+sudo ufw allow 6667
+sudo ufw reload
