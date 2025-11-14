@@ -1,0 +1,47 @@
+sudo apt update && sudo apt upgrade -y
+sudo apt install apt-transport-https wget gnupg -y
+
+wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo gpg --dearmor -o /usr/share/keyrings/elasticsearch-keyring.gpg
+
+echo "deb [signed-by=/usr/share/keyrings/elasticsearch-keyring.gpg] https://artifacts.elastic.co/packages/8.x/apt stable main" | sudo tee /etc/apt/sources.list.d/elastic-8.x.list
+
+sudo apt update
+
+sudo apt install elasticsearch -y
+
+Elastic initial password for the elastic user is: xxxxxxxxxxxxx
+
+sudo nano /etc/elasticsearch/elasticsearch.yml
+
+cluster.name: my-elasticsearch
+node.name: node-1
+network.host: 0.0.0.0
+http.port: 9200
+discovery.type: single-node
+
+sudo systemctl daemon-reload
+sudo systemctl enable elasticsearch
+sudo systemctl start elasticsearch
+
+sudo systemctl status elasticsearch
+
+curl -k -u elastic https://localhost:9200
+
+curl -u elastic http://localhost:9200
+
+{
+  "name" : "node-1",
+  "cluster_name" : "my-elasticsearch",
+  "cluster_uuid" : "...",
+  "tagline" : "You Know, for Search"
+}
+
+sudo /usr/share/elasticsearch/bin/elasticsearch-reset-password -u elastic
+
+sudo ufw allow 9200/tcp
+
+sudo apt install kibana -y
+sudo systemctl enable kibana
+sudo systemctl start kibana
+
+http://your-server-ip:5601
