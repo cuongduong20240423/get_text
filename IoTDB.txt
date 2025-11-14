@@ -8,12 +8,12 @@ sudo mkdir iotdb
 sudo chmod 777 /opt/iotdb
 cd /opt/iotdb
 
-wget https://dlcdn.apache.org/iotdb/1.3.2/apache-iotdb-1.3.2-all-bin.zip
+wget https://dlcdn.apache.org/iotdb/2.0.5/apache-iotdb-2.0.5-all-bin.zip
 
 sudo apt install unzip -y
-unzip apache-iotdb-1.3.2-all-bin.zip
+unzip apache-iotdb-2.0.5-all-bin.zip
 
-mv apache-iotdb-1.3.2-all-bin iotdb
+mv apache-iotdb-2.0.5-all-bin iotdb
 cd iotdb
 
 nano conf/iotdb-engine.properties
