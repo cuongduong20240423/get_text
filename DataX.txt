@@ -59,15 +59,12 @@ rm -rf plugin/*/target
 
 cd /opt
 cd /opt
-git clone https://github.com/goverdata/DataX.git datx3
-cd datx3
+git clone https://github.com/wgzhao/datax.git datax3
+cd datax3
 
-git branch -a
-git tag
 
 git checkout v3.2.3
 
-sudo apt install maven -y
 
 sudo nano /etc/maven/settings.xml
 
@@ -75,33 +72,17 @@ sudo nano /etc/maven/settings.xml
   <mirrors>
     <mirror>
       <id>central</id>
-      <name>Maven Central</name>
+      <name>Central Repo</name>
       <url>https://repo1.maven.org/maven2/</url>
       <mirrorOf>*</mirrorOf>
     </mirror>
   </mirrors>
 </settings>
 
-cd /opt/datx3
-mvn -U clean package -Dmaven.test.skip=true
+mvn clean package
+mvn package assembly:single
 
-/opt/datx3/target/datax/datax/
+target/datax/datax-3.2.x/
 
-mkdir -p /opt/datax-3
-cp -r /opt/datx3/target/datax/datax/* /opt/datax-3/
-
-python3 /opt/datax-3/bin/datax.py /opt/datax-3/job/job.json
-
-
-cd /opt/datax-3/plugin/reader
-git clone https://github.com/goverdata/mysqlreader.git
-cd mysqlreader
-mvn -U clean package -Dmaven.test.skip=true
-
-cp -r target/mysqlreader /opt/datax-3/plugin/reader/
-
-cd /opt/datax-3/plugin/writer
-git clone https://github.com/goverdata/mysqlwriter.git
-cd mysqlwriter
-mvn -U clean package -Dmaven.test.skip=true
-cp -r target/mysqlwriter /opt/datax-3/plugin/writer/
+cd target/datax/datax-3.2.x
+python3 bin/datax.py job/job.json
