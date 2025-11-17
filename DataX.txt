@@ -94,3 +94,12 @@ rm -rf target
 rm -rf common/target
 rm -rf core/target
 rm -rf plugin/*/target
+
+
+
+cd /opt
+wget https://datax-opensource.oss-cn-hangzhou.aliyuncs.com/datax.tar.gz
+tar -zxvf datax.tar.gz
+mv datax datax-run
+
+python3 /opt/datax-run/bin/datax.py /opt/datax-run/job/job.json
