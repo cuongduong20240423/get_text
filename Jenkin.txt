@@ -11,7 +11,7 @@ kubectl create namespace devops
 # 4. Cài Jenkins LTS mới nhất
 helm install jenkins jenkins/jenkins \
   --namespace devops \
-  --set controller.image.tag="lts-jdk11"
+  --set controller.image.tag="lts-jdk17"
 
 # 5. Xem pod
 kubectl get pods -n devops
