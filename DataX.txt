@@ -49,46 +49,6 @@ sudo systemctl enable datax
 sudo systemctl start datax
 
 
-
-<settings>
-  <mirrors>
-    <mirror>
-      <id>central</id>
-      <name>Maven Central</name>
-      <url>https://repo1.maven.org/maven2/</url>
-      <mirrorOf>*</mirrorOf>
-    </mirror>
-
-    <mirror>
-      <id>google</id>
-      <name>Google Maven Mirror</name>
-      <url>https://maven-central.storage-download.googleapis.com/maven2/</url>
-      <mirrorOf>*</mirrorOf>
-    </mirror>
-  </mirrors>
-
-  <profiles>
-    <profile>
-      <id>central</id>
-      <repositories>
-        <repository>
-          <id>central</id>
-          <url>https://repo1.maven.org/maven2/</url>
-        </repository>
-      </repositories>
-    </profile>
-  </profiles>
-
-  <activeProfiles>
-    <activeProfile>central</activeProfile>
-  </activeProfiles>
-</settings>
-
-
-
-
-
-
 cd /opt/datax
 rm -rf target
 rm -rf common/target
@@ -98,8 +58,50 @@ rm -rf plugin/*/target
 
 
 cd /opt
-wget https://datax-opensource.oss-cn-hangzhou.aliyuncs.com/datax.tar.gz
-tar -zxvf datax.tar.gz
-mv datax datax-run
+cd /opt
+git clone https://github.com/goverdata/DataX.git datx3
+cd datx3
 
-python3 /opt/datax-run/bin/datax.py /opt/datax-run/job/job.json
+git branch -a
+git tag
+
+git checkout v3.2.3
+
+sudo apt install maven -y
+
+sudo nano /etc/maven/settings.xml
+
+<settings>
+  <mirrors>
+    <mirror>
+      <id>central</id>
+      <name>Maven Central</name>
+      <url>https://repo1.maven.org/maven2/</url>
+      <mirrorOf>*</mirrorOf>
+    </mirror>
+  </mirrors>
+</settings>
+
+cd /opt/datx3
+mvn -U clean package -Dmaven.test.skip=true
+
+/opt/datx3/target/datax/datax/
+
+mkdir -p /opt/datax-3
+cp -r /opt/datx3/target/datax/datax/* /opt/datax-3/
+
+python3 /opt/datax-3/bin/datax.py /opt/datax-3/job/job.json
+
+
+cd /opt/datax-3/plugin/reader
+git clone https://github.com/goverdata/mysqlreader.git
+cd mysqlreader
+mvn -U clean package -Dmaven.test.skip=true
+
+cp -r target/mysqlreader /opt/datax-3/plugin/reader/
+
+cd /opt/datax-3/plugin/writer
+git clone https://github.com/goverdata/mysqlwriter.git
+cd mysqlwriter
+mvn -U clean package -Dmaven.test.skip=true
+cp -r target/mysqlwriter /opt/datax-3/plugin/writer/
