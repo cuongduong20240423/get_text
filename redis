@@ -5,9 +5,9 @@ sudo apt update
 sudo apt install -y build-essential tcl curl
 
 cd /tmp
-curl -O https://download.redis.io/releases/redis-8.0.0.tar.gz
-tar xzvf redis-8.0.0.tar.gz
-cd redis-8.0.0
+curl -O https://download.redis.io/releases/redis-8.2.3.tar.gz
+tar xzvf redis-8.2.3.tar.gz
+cd redis-8.2.3
 
 make
 sudo make install
@@ -46,3 +46,9 @@ sudo systemctl start redis
 
 
 redis-server -v
+
+
+cd /tmp
+git clone https://github.com/redis/redis.git
+cd redis
+
